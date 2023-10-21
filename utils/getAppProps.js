@@ -12,11 +12,11 @@ export const getAppProps = async (ctx) => {
   if (!user) {
     return {
       availableTokens: 0,
-      posts: [],
+      images: [],
     };
   }
 
-  const posts = await db
+  const images = await db
     .collection('images')
     .find({
       userId: user._id,
@@ -29,11 +29,11 @@ export const getAppProps = async (ctx) => {
 
   return {
     availableTokens: user.availableTokens,
-    posts: posts.map(({ created, _id, userId, ...rest }) => ({
+    images: images.map(({ created, _id, userId, ...rest }) => ({
       _id: _id.toString(),
       created: created.toString(),
       ...rest,
     })),
-    postId: ctx.params?.postId || null,
+    imageId: ctx.params?.imageId || null,
   };
 };

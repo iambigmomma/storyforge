@@ -5,93 +5,127 @@ import { ObjectId } from 'mongodb';
 import { useRouter } from 'next/router';
 import { useContext, useState } from 'react';
 import { AppLayout } from '../../components/AppLayout';
-// import PostsContext from '../../context/postsContext';
+import ImagesContext from "../../context/imagesContext";
 import clientPromise from '../../lib/mongodb';
 import { getAppProps } from '../../utils/getAppProps';
+import Image from "next/image"
+
 
 export default function Post(props) {
-  console.log('PROPS: ', props);
   const router = useRouter();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  // const { deletePost } = useContext(PostsContext);
+  const [showModal, setShowModal] = useState(false)
+
+  const { deleteImage } = useContext(ImagesContext);
 
   const handleDeleteConfirm = async () => {
     try {
-      const response = await fetch(`/api/deletePost`, {
-        method: 'POST',
+      const response = await fetch(`/api/deleteImage`, {
+        method: "POST",
         headers: {
-          'content-type': 'application/json',
+          "content-type": "application/json",
         },
-        body: JSON.stringify({ postId: props.id }),
-      });
+        body: JSON.stringify({ imageId: props.id, imageLink: props.imageLink }),
+      })
       const json = await response.json();
+
       if (json.success) {
-        deletePost(props.id);
+        deleteImage(props.id);
         router.replace(`/image/new`);
       }
-    } catch (e) {}
+    } catch (e) {
+          console.error("Error in handleDeleteConfirm:", e)
+    }
   };
 
   return (
-    props
-    // <div className="h-full overflow-auto">
-    //   <div className="max-w-screen-sm mx-auto">
-    //     <div className="p-2 mt-6 text-sm font-bold rounded-sm bg-stone-200">
-    //       SEO title and meta description
-    //     </div>
-    //     <div className="p-4 my-2 border rounded-md border-stone-200">
-    //       <div className="text-2xl font-bold text-blue-600">{props.title}</div>
-    //       <div className="mt-2">{props.metaDescription}</div>
-    //     </div>
-    //     <div className="p-2 mt-6 text-sm font-bold rounded-sm bg-stone-200">
-    //       Keywords
-    //     </div>
-    //     <div className="flex flex-wrap gap-1 pt-2">
-    //       {props.keywords.split(',').map((keyword, i) => (
-    //         <div key={i} className="p-2 text-white rounded-full bg-slate-800">
-    //           <FontAwesomeIcon icon={faHashtag} /> {keyword}
-    //         </div>
-    //       ))}
-    //     </div>
-    //     <div className="p-2 mt-6 text-sm font-bold rounded-sm bg-stone-200">
-    //       Blog post
-    //     </div>
-    //     <div dangerouslySetInnerHTML={{ __html: props.postContent || '' }} />
-    //     <div className="my-4">
-    //       {!showDeleteConfirm && (
-    //         <button
-    //           className="bg-red-600 btn hover:bg-red-700"
-    //           onClick={() => setShowDeleteConfirm(true)}
-    //         >
-    //           Delete post
-    //         </button>
-    //       )}
-    //       {!!showDeleteConfirm && (
-    //         <div>
-    //           <p className="p-2 text-center bg-red-300">
-    //             Are you sure you want to delete this post? This action is
-    //             irreversible
-    //           </p>
-    //           <div className="grid grid-cols-2 gap-2">
-    //             <button
-    //               onClick={() => setShowDeleteConfirm(false)}
-    //               className="btn bg-stone-600 hover:bg-stone-700"
-    //             >
-    //               cancel
-    //             </button>
-    //             <button
-    //               onClick={handleDeleteConfirm}
-    //               className="bg-red-600 btn hover:bg-red-700"
-    //             >
-    //               confirm delete
-    //             </button>
-    //           </div>
-    //         </div>
-    //       )}
-    //     </div>
-    //   </div>
-    // </div>
-  );
+    <div>
+      <div className="relative flex flex-col items-center justify-center flex-1 p-4">
+        <div>
+          <div className="p-2 mt-6 text-sm text-center">
+            <h1>{props.imageName}</h1>
+          </div>
+          {/* <div className="p-2 mt-6 text-sm text-center rounded-sm bg-stone-200"> */}
+            <p>{props.imageDescription}</p>
+          {/* </div> */}
+        </div>
+        <div className="mb-4" onClick={() => setShowModal(true)}>
+          <Image
+            src={props.imageLink}
+            alt="Generated Image"
+            width={512}
+            height={512}
+            layout="intrinsic"
+            quality={100}
+          />
+        </div>
+        {props.imageLink && (
+          <button
+            className="btn"
+            style={{ width: "fit-content" }}
+            onClick={() => {
+              const link = document.createElement("a")
+              link.href = props.imageLink
+              link.download = props.imageCreated + ".jpg"
+              link.click()
+            }}>
+            Download Image
+          </button>
+        )}
+        {/* Image Modal */}
+        {showModal && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center">
+            {/* You can customize the modal styles further if needed */}
+            <div className="p-4 bg-white rounded shadow-lg">
+              <Image
+                src={props.imageLink}
+                alt={props.imageCreated + ".jpg"}
+                width={768}
+                height={768}
+                layout="intrinsic"
+                quality={100}
+              />
+              <button onClick={() => setShowModal(false)}>Close</button>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="h-full overflow-auto">
+        <div className="max-w-screen-sm mx-auto">
+          <div dangerouslySetInnerHTML={{ __html: props.postContent || "" }} />
+          <div className="my-4">
+            {!showDeleteConfirm && (
+              <button
+                className="bg-red-600 btn hover:bg-red-700"
+                onClick={() => setShowDeleteConfirm(true)}>
+                Delete image
+              </button>
+            )}
+            {!!showDeleteConfirm && (
+              <div>
+                <p className="p-2 text-center bg-red-300">
+                  Are you sure you want to delete this image? This action is
+                  irreversible
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="btn bg-stone-600 hover:bg-stone-700">
+                    cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteConfirm}
+                    className="bg-red-600 btn hover:bg-red-700">
+                    confirm delete
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 Post.getLayout = function getLayout(page, pageProps) {
@@ -111,6 +145,7 @@ export const getServerSideProps = withPageAuthRequired({
       _id: new ObjectId(ctx.params.imageId),
       userId: user._id,
     });
+    // console.log(image)
 
     if (!image) {
       return {
@@ -124,14 +159,12 @@ export const getServerSideProps = withPageAuthRequired({
     return {
       props: {
         id: ctx.params.imageId,
-        // image_base64: image
-        // postContent: post.postContent,
-        // title: post.title,
-        // metaDescription: post.metaDescription,
-        // keywords: post.keywords,
-        // postCreated: post.created.toString(),
+        imageName: image.imageName,
+        imageDescription: image.imageDescription,
+        imageLink: image.imageLink,
+        imageCreated: image.created.toString(),
         ...props,
       },
-    };
+    }
   },
 });

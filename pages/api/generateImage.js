@@ -46,9 +46,9 @@ export default withApiAuthRequired(async function handler(req, res) {
   // }
 
   const API_ENDPOINT = process.env.API_URL + "/sdapi/v1/txt2img"
-  const { topic } = req.body
+  const { imageDescription, imageName } = req.body
 
-  if (!topic) {
+  if (!imageDescription && !imageName) {
     res.status(422)
     return
   }
@@ -59,7 +59,7 @@ export default withApiAuthRequired(async function handler(req, res) {
   // }
 
   const requestBody = {
-    prompt: `children's illustration style, ${topic}, cinematic photo, 4k, highly detailed, uhd image, intricate details, detailed scene background, detailed, 8k, trending, amazing art, colorful, <lora:child_illustration_book_sdxl:1>`,
+    prompt: `children's illustration style, ${imageDescription}, cinematic photo, 4k, highly detailed, uhd image, intricate details, detailed scene background, detailed, 8k, trending, amazing art, colorful, <lora:child_illustration_book_sdxl:1>`,
     negative_prompt: "easynegativev2 ng_deepnegative_v1_75t",
     steps: 35,
     cfg_scale: 7,
@@ -88,7 +88,7 @@ export default withApiAuthRequired(async function handler(req, res) {
   const imageBuffer = Buffer.from(responseBody.images[0], 'base64');
 
   // Generate a unique filename for the image
-  const fileName = `${Date.now()}.jpg`;
+  const fileName = imageName+`.jpg`;
 
   // Use the user's DO Space bucket name or a default bucket name
 //   const bucketName = userProfile.bucketName || "default-bucket-name";
@@ -96,47 +96,46 @@ export default withApiAuthRequired(async function handler(req, res) {
 
 
   try {
+    // // Deduct a token from the user's availableTokens
+    // await db.collection('users').updateOne(
+    //     {
+    //         auth0Id: user.sub,
+    //     },
+    //     {
+    //         $inc: {
+    //             availableTokens: -1,
+    //         },
+    //     }
+    // );
+
+
     // Upload the image to DigitalOcean Spaces
-    const imageUrl = await uploadToSpace(imageBuffer, fileName, bucketName);
+    const imageUrl = await uploadToSpace(imageBuffer, fileName, bucketName)
 
     // Save the image link and other relevant info in MongoDB
-    const imageDocument = await db.collection('images').insertOne({
+    const imageDocument = await db.collection("images").insertOne({
       imageLink: imageUrl,
       userId: userProfile._id,
+      imageName: imageName || "",
+      imageDescription: imageDescription || "",
+      imageMeta: JSON.parse(responseBody.info) || "",
       created: new Date(),
       // You can add more fields from responseBody.info or other sources as needed
-    });
-
-    res.status(200).json({
-          image_base64: responseBody.images[0],
-          image_info: responseBody.info,
-          imageId: imageDocument.insertedId,
     })
 
-
+    res.status(200).json({
+      // image_base64: responseBody.images[0],
+      imageLink: imageUrl,
+      // image_info: responseBody.info,
+      imageId: imageDocument.insertedId,
+    })
   } catch (error) {
     console.error("Error uploading to DigitalOcean Spaces:", error);
     res.status(500).send("Failed to upload image to DigitalOcean Spaces.");
   }
 
 
-  // // Deduct a token from the user's availableTokens
-  // await db.collection('users').updateOne(
-  //     {
-  //         auth0Id: user.sub,
-  //     },
-  //     {
-  //         $inc: {
-  //             availableTokens: -1,
-  //         },
-  //     }
-  // );
 
-  // const imageDocument = await db.collection('images').insertOne({
-  //     imageLink: responseBody.images[0], // Example field, adapt as necessary
-  //     userId: userProfile._id,
-  //     created: new Date(),
-  // });
 
 
 });

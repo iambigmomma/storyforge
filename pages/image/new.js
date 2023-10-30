@@ -54,7 +54,7 @@ return (
             className="block w-full px-4 py-2 my-2 border rounded-sm resize-none border-slate-500"
             value={imageName}
             onChange={(e) => setImageName(e.target.value)}
-            maxLength={20}
+            maxLength={40}
           />
           <label className="block text-center">
             <strong>Dreams in Every Word</strong>
@@ -63,7 +63,7 @@ return (
             className="block w-full px-4 py-2 my-2 border rounded-sm resize-none border-slate-500"
             value={imageDescription}
             onChange={(e) => setImageDescription(e.target.value)}
-            maxLength={180}
+            maxLength={300}
           />
         </div>
         <button type="submit" className="btn" disabled={!imageDescription.trim()}>

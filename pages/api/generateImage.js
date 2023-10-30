@@ -97,16 +97,16 @@ export default withApiAuthRequired(async function handler(req, res) {
 
   try {
     // // Deduct a token from the user's availableTokens
-    // await db.collection('users').updateOne(
-    //     {
-    //         auth0Id: user.sub,
-    //     },
-    //     {
-    //         $inc: {
-    //             availableTokens: -1,
-    //         },
-    //     }
-    // );
+    await db.collection('users').updateOne(
+        {
+            auth0Id: user.sub,
+        },
+        {
+            $inc: {
+                availableTokens: -1,
+            },
+        }
+    );
 
 
     // Upload the image to DigitalOcean Spaces

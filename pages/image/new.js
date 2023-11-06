@@ -8,8 +8,12 @@ import Image from "next/image"
 
 export default function NewPost(props) {
   const router = useRouter()
-  const [imageDescription, setImageDescription] = useState("")
-  const [imageName, setImageName] = useState("")
+  const defaultImageName = `Simba's Magican Voyage Chapter2`
+  const defaultDescription = `Description: Harry Simba learns magic with his friends Hermione Nala and Ron Zazu.
+Background: A spacious classroom filled with animals casting various spells with their magic wands.`
+
+  const [imageDescription, setImageDescription] = useState(defaultDescription)
+  const [imageName, setImageName] = useState(defaultImageName)
   const [generating, setGenerating] = useState(false)
   const [generatedImage, setGeneratedImage] = useState(null)
   const [generatedImageInfo, setGeneratedImageInfo] = useState(null)
@@ -53,6 +57,7 @@ return (
           <textarea
             className="block w-full px-4 py-2 my-2 border rounded-sm resize-none border-slate-500"
             value={imageName}
+            placeholder="Enter image name here..."
             onChange={(e) => setImageName(e.target.value)}
             maxLength={40}
           />
@@ -62,11 +67,16 @@ return (
           <textarea
             className="block w-full px-4 py-2 my-2 border rounded-sm resize-none border-slate-500"
             value={imageDescription}
+            placeholder="Enter image description here..."
             onChange={(e) => setImageDescription(e.target.value)}
             maxLength={300}
+            rows="6"
           />
         </div>
-        <button type="submit" className="btn" disabled={!imageDescription.trim()}>
+        <button
+          type="submit"
+          className="btn"
+          disabled={!imageDescription.trim()}>
           Generate
         </button>
       </form>

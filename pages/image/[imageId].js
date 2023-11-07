@@ -8,7 +8,9 @@ import { AppLayout } from '../../components/AppLayout';
 import ImagesContext from "../../context/imagesContext";
 import clientPromise from '../../lib/mongodb';
 import { getAppProps } from '../../utils/getAppProps';
-import Image from "next/image"
+import Image from "next/image";
+import Head from "next/head"
+
 
 
 export default function Post(props) {
@@ -40,13 +42,17 @@ export default function Post(props) {
 
   return (
     <div>
+      <Head>
+        <title>{props.imageName} | StoryForge</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
       <div className="relative flex flex-col items-center justify-center flex-1 p-4">
         <div>
           <div className="p-2 mt-6 text-sm text-center">
             <h1>{props.imageName}</h1>
           </div>
           {/* <div className="p-2 mt-6 text-sm text-center rounded-sm bg-stone-200"> */}
-            <p>{props.imageDescription}</p>
+          <p>{props.imageDescription}</p>
           {/* </div> */}
         </div>
         <div className="mb-4" onClick={() => setShowModal(true)}>

@@ -5,8 +5,10 @@ import { AppLayout } from "../../components/AppLayout"
 import { getAppProps } from "../../utils/getAppProps"
 import logo from "../../public/generating-icon.png"
 import Image from "next/image"
+import Head from "next/head"
 
-export default function NewPost(props) {
+
+export default function NewImage(props) {
   const router = useRouter()
   const defaultImageName = `Simba's Magican Voyage Chapter2`
   const defaultDescription = `Description: Harry Simba learns magic with his friends Hermione Nala and Ron Zazu.
@@ -45,11 +47,15 @@ Background: A spacious classroom filled with animals casting various spells with
 
 return (
   <div className="flex flex-col h-full overflow-hidden">
+    <Head>
+      <title>New Scene | StoryForge</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </Head>
     {/* Form Section */}
     <div className="p-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-screen-sm m-auto border rounded-md shadow-xl bg-slate-100 border-slate-200 shadow-slate-200">
+        className="w-full max-w-screen-sm p-4 m-auto border rounded-md shadow-xl bg-slate-100 border-slate-200 shadow-slate-200 md:p-6">
         <div>
           <label className="block text-center">
             <strong>Scene name</strong>
@@ -84,21 +90,8 @@ return (
 
     {/* Image Preview Section */}
     <div className="relative flex flex-col items-center justify-center flex-1 p-4">
-      {/* {generatedImage && (
-        <div className="mb-4" onClick={() => setShowModal(true)}>
-          <Image
-            // src={`data:image/png;base64,${generatedImage}`}
-            src={generatedImage}
-            alt="Generated Image"
-            width={512}
-            height={512}
-            layout="intrinsic"
-            quality={100}
-          />
-        </div>
-      )} */}
       {generating && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center w-full h-full text-blue-500 bg-white bg-opacity-50 animate-pulse">
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center w-full h-full bg-white bg-opacity-50">
           <Image src={logo} width={200} height={200} alt="logo" />
           <h6>Generating...</h6>
         </div>
@@ -108,7 +101,7 @@ return (
 )
 }
 
-NewPost.getLayout = function getLayout(page, pageProps) {
+NewImage.getLayout = function getLayout(page, pageProps) {
   return <AppLayout {...pageProps}>{page}</AppLayout>
 }
 

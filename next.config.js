@@ -5,6 +5,7 @@ const nextConfig = {
     domains: [
       "s.gravatar.com",
       "child-illustration-book.fra1.digitaloceanspaces.com",
+      "child-illustration-book.fra1.cdn.digitaloceanspaces.com",
     ],
   },
 }

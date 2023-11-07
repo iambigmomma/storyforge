@@ -25,7 +25,8 @@ async function uploadToSpace(imageBuffer, fileName, bucketName) {
           reject(err)
         } else {
           resolve(
-            `https://${bucketName}.fra1.digitaloceanspaces.com/${fileName}`
+            // Return the CDN endpoint for better UX
+            `https://${bucketName}.fra1.cdn.digitaloceanspaces.com/${fileName}`
           )
         }
       })
@@ -110,11 +111,11 @@ export default withApiAuthRequired(async function handler(req, res) {
 
 
     // Upload the image to DigitalOcean Spaces
-    const imageUrl = await uploadToSpace(imageBuffer, fileName, bucketName)
+    const imageCDNUrl = await uploadToSpace(imageBuffer, fileName, bucketName)
 
     // Save the image link and other relevant info in MongoDB
     const imageDocument = await db.collection("images").insertOne({
-      imageLink: imageUrl,
+      imageLink: imageCDNUrl,
       userId: userProfile._id,
       imageName: imageName || "",
       imageDescription: imageDescription || "",
@@ -125,7 +126,7 @@ export default withApiAuthRequired(async function handler(req, res) {
 
     res.status(200).json({
       // image_base64: responseBody.images[0],
-      imageLink: imageUrl,
+      imageLink: imageCDNUrl,
       // image_info: responseBody.info,
       imageId: imageDocument.insertedId,
     })

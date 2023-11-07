@@ -3,60 +3,83 @@
 @tailwind utilities;
 
 @layer base {
-  a:hover {
-    @apply underline;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-heading my-6 font-bold;
-  }
-
+  /* Base styles for all devices */
   h1 {
-    @apply text-4xl;
+    @apply text-2xl md:text-3xl lg:text-4xl; /* smaller on mobile, larger on desktop */
   }
 
   h2 {
-    @apply text-3xl;
+    @apply text-xl md:text-2xl lg:text-3xl;
   }
+
   h3 {
-    @apply text-2xl;
+    @apply text-lg md:text-xl lg:text-2xl;
   }
+
   h4 {
-    @apply text-xl;
+    @apply text-base md:text-lg lg:text-xl;
   }
+
   h5 {
-    @apply text-lg;
+    @apply text-sm md:text-base lg:text-lg;
   }
 
+  /* Paragraphs are slightly smaller on mobile */
   p {
-    @apply my-2;
+    @apply text-sm md:text-base;
   }
 
+  /* Adjustments for padding and margins */
+  .container {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+
+  .button {
+    @apply px-4 py-2 md:py-3 md:px-6;
+  }
+
+  /* Make sure lists are not too cramped on mobile */
   ul,
   ol {
-    @apply my-4;
-  }
-
-  ul {
-    list-style-type: disc;
-  }
-
-  ol {
-    list-style-type: decimal;
+    @apply my-2 md:my-4;
   }
 
   li {
-    @apply my-2;
+    @apply my-1 md:my-2;
+  }
+
+  /* Links with underlines on hover */
+  a {
+    @apply no-underline hover:underline;
   }
 }
 
 @layer components {
+  /* The .btn class with responsive padding and full width on mobile */
   .btn {
-    @apply disabled:bg-blue-200 disabled:cursor-not-allowed hover:no-underline bg-blue-500 tracking-wider w-full text-center text-white font-bold cursor-pointer uppercase px-4 py-2 rounded-md hover:bg-blue-600 transition-colors block;
+    @apply block font-bold text-white uppercase transition-colors bg-blue-500 rounded-md disabled:bg-blue-200 disabled:cursor-not-allowed hover:no-underline;
+    @apply px-4 py-2 md:px-6 md:py-3; /* Larger padding on wider screens */
+    @apply w-full sm:w-auto; /* Full width on small screens, auto on larger screens */
+    text-align: center;
+    display: block;
+    width: 100%; /* Optional, depending on your design */
+  }
+
+  /* Additional component styles */
+  .menu-bar {
+    @apply hidden md:flex; /* The menu bar is hidden on mobile and shown on tablet and larger screens */
+  }
+
+  .menu-toggle {
+    @apply flex md:hidden; /* The toggle button is shown on mobile and hidden on tablet and larger screens */
+  }
+
+  /* Hidden menu that shows when the toggle is clicked */
+  .menu-items {
+    @apply hidden; /* Initially hidden */
+    /* When the toggle is activated, use JavaScript to add an 'active' class that has 'flex' */
+    /* .menu-items.active {
+      @apply flex flex-col;
+    } */
   }
 }

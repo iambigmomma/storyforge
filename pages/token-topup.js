@@ -2,6 +2,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0"
 import { AppLayout } from "../components/AppLayout"
 import { getAppProps } from "../utils/getAppProps"
 
+
 export default function TokenTopup() {
   const handleClick = async () => {
     const result = await fetch(`/api/addTokens`, {

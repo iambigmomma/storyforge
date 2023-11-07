@@ -100,7 +100,7 @@ export const AppLayout = ({
     <div className="flex flex-col h-screen max-h-screen overflow-hidden md:flex-row">
       <Head>
         <title>
-          StoryForge | Craft children's illustration stories effortlessly
+          StoryForge | Craft child illustration stories effortlessly
         </title>
       </Head>
       {/* Mobile Header */}

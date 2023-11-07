@@ -6,6 +6,8 @@ import Link from "next/link"
 import { useContext, useEffect } from "react"
 import ImagesContext from "../../context/imagesContext" // renamed PostsContext
 import { Logo } from "../Logo"
+import Head from "next/head"
+
 
 export const AppLayout = ({
   children,
@@ -31,6 +33,11 @@ export const AppLayout = ({
 
   return (
     <div className="grid grid-cols-[300px_1fr] h-screen max-h-screen">
+      <Head>
+        <title>
+          StoryForge | Craft child illustration stories effortlessly
+        </title>
+      </Head>
       <div className="flex flex-col overflow-hidden text-white">
         <div className="px-2 bg-slate-800">
           <Logo />
@@ -53,7 +60,7 @@ export const AppLayout = ({
               {image.imageName} : {image.imageDescription}
             </Link>
           ))}
-          {!noMoreImages && (
+          {images.length > 0 && !noMoreImages && (
             <div
               onClick={() => {
                 getImages({ lastImageDate: images[images.length - 1].created })

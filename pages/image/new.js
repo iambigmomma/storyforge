@@ -17,8 +17,6 @@ Background: A spacious classroom filled with animals casting various spells with
   const [imageDescription, setImageDescription] = useState(defaultDescription)
   const [imageName, setImageName] = useState(defaultImageName)
   const [generating, setGenerating] = useState(false)
-  const [generatedImage, setGeneratedImage] = useState(null)
-  const [generatedImageInfo, setGeneratedImageInfo] = useState(null)
 
 
   const handleSubmit = async (e) => {
@@ -35,10 +33,6 @@ Background: A spacious classroom filled with animals casting various spells with
       const json_response = await response.json()
       if (json_response?.imageId) {
         router.push(`/image/${json_response.imageId}`)
-        // setGeneratedImage(json_response.imageLink)
-        // setGeneratedImageInfo(JSON.parse(json_response.image_info))
-        // console.log(JSON.parse(json_response.image_info))
-        // setGenerating(false)
       }
     } catch (e) {
       setGenerating(false)
@@ -46,13 +40,20 @@ Background: A spacious classroom filled with animals casting various spells with
   }
 
 return (
-  <div className="flex flex-col h-full overflow-hidden">
+  <div className="relative flex flex-col h-full overflow-hidden">
     <Head>
       <title>New Scene | StoryForge</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
     </Head>
+    {/* Overlay Section During Generating*/}
+    {generating && (
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white bg-opacity-75">
+        <Image src={logo} width={200} height={200} alt="Generating icon" />
+        <h6>Generating...</h6>
+      </div>
+    )}
     {/* Form Section */}
-    <div className="p-4">
+    <div className={`p-4 ${generating ? "opacity-50" : ""}`}>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-screen-sm p-4 m-auto border rounded-md shadow-xl bg-slate-100 border-slate-200 shadow-slate-200 md:p-6">
@@ -86,16 +87,6 @@ return (
           Generate
         </button>
       </form>
-    </div>
-
-    {/* Image Preview Section */}
-    <div className="relative flex flex-col items-center justify-center flex-1 p-4">
-      {generating && (
-        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center w-full h-full bg-white bg-opacity-50">
-          <Image src={logo} width={200} height={200} alt="logo" />
-          <h6>Generating...</h6>
-        </div>
-      )}
     </div>
   </div>
 )

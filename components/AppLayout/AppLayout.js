@@ -113,7 +113,7 @@ export const AppLayout = ({
           <span className="ml-2 font-semibold">{!isMenuOpen && "MENU"}</span>
         </button>
         {/* Logo */}
-        <Logo className="mb-4" />
+        {/* <Logo className="mb-2" /> */}
       </div>
 
       {/* Overlay menu for small screens */}

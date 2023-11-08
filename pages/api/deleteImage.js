@@ -23,7 +23,7 @@ export default withApiAuthRequired(async function handler(req, res) {
       auth0Id: sub,
     })
 
-    const { imageId, imageLink } = req.body
+    const { imageName, imageId } = req.body
 
     // Delete the image from the database
     await db.collection("images").deleteOne({
@@ -31,14 +31,15 @@ export default withApiAuthRequired(async function handler(req, res) {
       _id: new ObjectId(imageId),
     })
 
-    // Extract the file key from the image link. Assuming the link is something like https://your-space-name.nyc3.digitaloceanspaces.com/filename.extension
-    const fileKey = imageLink.split("/").pop()
+    // Extract the file key from the image link. Assuming the link is something like https://your-space-name.fra1.digitaloceanspaces.com/folderName/fileName
+    const filePath = userProfile.folderName + "/" + imageName + ".jpg"
+    console.log("FILE DELETED! Folder name: " + userProfile.folderName+ ", File name: " + imageName + ".jpg")
 
     // Delete the image from DigitalOcean Spaces
     await s3
       .deleteObject({
-        Bucket: "child-illustration-book", // Replace with your space's name
-        Key: fileKey,
+        Bucket: "storyforge", // Replace with your space's name
+        Key: filePath,
       })
       .promise()
 

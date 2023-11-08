@@ -36,7 +36,7 @@ export default function Post(props) {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ imageId: props.id, imageLink: props.imageLink }),
+        body: JSON.stringify({ imageName: props.imageName, imageId: props.id }),
       })
       const json = await response.json()
 

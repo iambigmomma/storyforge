@@ -11,12 +11,13 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.DO_SECRET_KEY
 });
 
-async function uploadToSpace(imageBuffer, fileName, bucketName) {
+async function uploadToSpace(imageBuffer, fileName, bucketName, folderName) {
     return new Promise((resolve, reject) => {
+      const filePath = folderName + "/" + fileName
       const params = {
         Body: imageBuffer,
         Bucket: bucketName,
-        Key: fileName,
+        Key: filePath,
         ACL: "public-read", // Making the image publicly accessible
       }
 
@@ -26,7 +27,7 @@ async function uploadToSpace(imageBuffer, fileName, bucketName) {
         } else {
           resolve(
             // Return the CDN endpoint for better UX
-            `https://${bucketName}.fra1.cdn.digitaloceanspaces.com/${fileName}`
+            `https://${bucketName}.fra1.cdn.digitaloceanspaces.com/${filePath}`
           )
         }
       })
@@ -69,51 +70,51 @@ export default withApiAuthRequired(async function handler(req, res) {
   //   restore_faces: true,
   //   sampler_index: "DPM++ SDE Karras",
   // }
-    const requestBody = {
-      enable_hr: true,
-      denoising_strength: 0.6,
-      hr_scale: 2,
-      hr_upscaler: "R-ESRGAN 4x+ Anime6B",
-      hr_second_pass_steps: 20,
-      hr_resize_x: 0,
-      hr_resize_y: 0,
-      hr_sampler_name: "",
-      hr_prompt: "",
-      hr_negative_prompt: "",
-      prompt: `${imageDescription}`,
-      negative_prompt:
-        "(nsfw:1.5),verybadimagenegative_v1.3,ng_deepnegative_v1_75t,(ugly face:0.8),cross-eyed,sketches,(worst quality:2),(low quality:2),(normal quality:2),lowres,normal quality,((monochrome)),((grayscale)),skin spots,acnes,skin blemishes,bad anatomy,nsfw,, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry",
-      seed: -1,
-      subseed: -1,
-      subseed_strength: 0,
-      seed_resize_from_h: -1,
-      seed_resize_from_w: -1,
-      sampler_name: "Euler a",
-      batch_size: 1,
-      n_iter: 1,
-      steps: 20,
-      cfg_scale: 7,
-      width: 512,
-      height: 768,
-      restore_faces: true,
-      tiling: false,
-      do_not_save_samples: false,
-      do_not_save_grid: false,
-      eta: 0,
-      s_min_uncond: 0,
-      s_churn: 0,
-      s_tmax: 0,
-      s_tmin: 0,
-      s_noise: 1,
-      override_settings: {},
-      override_settings_restore_afterwards: true,
-      script_args: [],
-      sampler_index: "Euler a",
-      script_name: "",
-      send_images: true,
-      save_images: false,
-      alwayson_scripts: {},
-    }
+  const requestBody = {
+    enable_hr: true,
+    denoising_strength: 0.6,
+    hr_scale: 2,
+    hr_upscaler: "R-ESRGAN 4x+ Anime6B",
+    hr_second_pass_steps: 20,
+    hr_resize_x: 0,
+    hr_resize_y: 0,
+    hr_sampler_name: "",
+    hr_prompt: "",
+    hr_negative_prompt: "",
+    prompt: `${imageDescription}`,
+    negative_prompt:
+      "(nsfw:1.5),verybadimagenegative_v1.3,ng_deepnegative_v1_75t,(ugly face:0.8),cross-eyed,sketches,(worst quality:2),(low quality:2),(normal quality:2),lowres,normal quality,((monochrome)),((grayscale)),skin spots,acnes,skin blemishes,bad anatomy,nsfw,, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry",
+    seed: -1,
+    subseed: -1,
+    subseed_strength: 0,
+    seed_resize_from_h: -1,
+    seed_resize_from_w: -1,
+    sampler_name: "Euler a",
+    batch_size: 1,
+    n_iter: 1,
+    steps: 20,
+    cfg_scale: 7,
+    width: 512,
+    height: 768,
+    restore_faces: true,
+    tiling: false,
+    do_not_save_samples: false,
+    do_not_save_grid: false,
+    eta: 0,
+    s_min_uncond: 0,
+    s_churn: 0,
+    s_tmax: 0,
+    s_tmin: 0,
+    s_noise: 1,
+    override_settings: {},
+    override_settings_restore_afterwards: true,
+    script_args: [],
+    sampler_index: "Euler a",
+    script_name: "",
+    send_images: true,
+    save_images: false,
+    alwayson_scripts: {},
+  }
 
   // Sending request to the new API endpoint
   const imageResponse = await fetch(API_ENDPOINT, {
@@ -131,43 +132,48 @@ export default withApiAuthRequired(async function handler(req, res) {
 
   const responseBody = await imageResponse.json()
   // Convert the base64 image to a buffer
-  const imageBuffer = Buffer.from(responseBody.images[0], 'base64');
+  const imageBuffer = Buffer.from(responseBody.images[0], "base64")
 
   // Generate a unique filename for the image
-  const fileName = imageName+`.jpg`;
+  const fileName = imageName + `.jpg`
 
   // Use the user's DO Space bucket name or a default bucket name
-//   const bucketName = userProfile.bucketName || "default-bucket-name";
-  const bucketName = "child-illustration-book"
+  //   const bucketName = userProfile.bucketName || "default-bucket-name";
+  const bucketName = "storyforge"
+  const folderName = userProfile.folderName
 
+  // Upload the image to DigitalOcean Spaces
+  const imageCDNUrl = await uploadToSpace(
+    imageBuffer,
+    fileName,
+    bucketName,
+    folderName
+  )
+
+  // Save the image link and other relevant info in MongoDB
+  const imageDocument = await db.collection("images").insertOne({
+    imageLink: imageCDNUrl,
+    userId: userProfile._id,
+    imageName: imageName || "",
+    imageDescription: imageDescription || "",
+    imageMeta: JSON.parse(responseBody.info) || "",
+    created: new Date(),
+    // You can add more fields from responseBody.info or other sources as needed
+  })
+
+  //  Deduct a token from the user's availableTokens once image generated successfully
 
   try {
-    // // Deduct a token from the user's availableTokens
-    await db.collection('users').updateOne(
-        {
-            auth0Id: user.sub,
+    await db.collection("users").updateOne(
+      {
+        auth0Id: user.sub,
+      },
+      {
+        $inc: {
+          availableTokens: -1,
         },
-        {
-            $inc: {
-                availableTokens: -1,
-            },
-        }
-    );
-
-
-    // Upload the image to DigitalOcean Spaces
-    const imageCDNUrl = await uploadToSpace(imageBuffer, fileName, bucketName)
-
-    // Save the image link and other relevant info in MongoDB
-    const imageDocument = await db.collection("images").insertOne({
-      imageLink: imageCDNUrl,
-      userId: userProfile._id,
-      imageName: imageName || "",
-      imageDescription: imageDescription || "",
-      imageMeta: JSON.parse(responseBody.info) || "",
-      created: new Date(),
-      // You can add more fields from responseBody.info or other sources as needed
-    })
+      }
+    )
 
     res.status(200).json({
       // image_base64: responseBody.images[0],
@@ -176,13 +182,8 @@ export default withApiAuthRequired(async function handler(req, res) {
       imageId: imageDocument.insertedId,
     })
   } catch (error) {
-    console.error("Error uploading to DigitalOcean Spaces:", error);
-    res.status(500).send("Failed to upload image to DigitalOcean Spaces.");
+    console.error("Error uploading to DigitalOcean Spaces:", error)
+    res.status(500).send("Failed to upload image to DigitalOcean Spaces.")
   }
-
-
-
-
-
 });
 

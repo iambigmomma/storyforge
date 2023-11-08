@@ -10,9 +10,8 @@ import Head from "next/head"
 
 export default function NewImage(props) {
   const router = useRouter()
-  const defaultImageName = `Simba's Magican Voyage Chapter2`
-  const defaultDescription = `Description: Harry Simba learns magic with his friends Hermione Nala and Ron Zazu.
-Background: A spacious classroom filled with animals casting various spells with their magic wands.`
+  const defaultImageName = `The Lady of The Rings Chapter27`
+  const defaultDescription = `In the warmth of a hobbit's home, brimming with ancient lore, Gandolfin the elder unfurls the storied past of the powerful ringlet to a wide-eyed Lilo, surrounded by towering stacks of books and age-old maps.`
 
   const [imageDescription, setImageDescription] = useState(defaultDescription)
   const [imageName, setImageName] = useState(defaultImageName)

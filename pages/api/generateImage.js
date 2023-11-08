@@ -59,16 +59,61 @@ export default withApiAuthRequired(async function handler(req, res) {
   //   return
   // }
 
-  const requestBody = {
-    prompt: `children's illustration style, ${imageDescription}, cinematic photo, 4k, highly detailed, uhd image, intricate details, detailed scene background, detailed, 8k, trending, amazing art, colorful, <lora:child_illustration_book_sdxl:1>`,
-    negative_prompt: "easynegativev2 ng_deepnegative_v1_75t",
-    steps: 35,
-    cfg_scale: 7,
-    width: 768,
-    height: 768,
-    restore_faces: true,
-    sampler_index: "DPM++ SDE Karras",
-  }
+  // const requestBody = {
+  //   prompt: `children's illustration style, ${imageDescription}, cinematic photo, 4k, highly detailed, uhd image, intricate details, detailed scene background, detailed, 8k, trending, amazing art, colorful, <lora:child_illustration_book_sdxl:1>`,
+  //   negative_prompt: "easynegativev2 ng_deepnegative_v1_75t",
+  //   steps: 35,
+  //   cfg_scale: 7,
+  //   width: 768,
+  //   height: 768,
+  //   restore_faces: true,
+  //   sampler_index: "DPM++ SDE Karras",
+  // }
+    const requestBody = {
+      enable_hr: true,
+      denoising_strength: 0.6,
+      hr_scale: 2,
+      hr_upscaler: "R-ESRGAN 4x+ Anime6B",
+      hr_second_pass_steps: 20,
+      hr_resize_x: 0,
+      hr_resize_y: 0,
+      hr_sampler_name: "",
+      hr_prompt: "",
+      hr_negative_prompt: "",
+      prompt: `${imageDescription}`,
+      negative_prompt:
+        "(nsfw:1.5),verybadimagenegative_v1.3,ng_deepnegative_v1_75t,(ugly face:0.8),cross-eyed,sketches,(worst quality:2),(low quality:2),(normal quality:2),lowres,normal quality,((monochrome)),((grayscale)),skin spots,acnes,skin blemishes,bad anatomy,nsfw,, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry",
+      seed: -1,
+      subseed: -1,
+      subseed_strength: 0,
+      seed_resize_from_h: -1,
+      seed_resize_from_w: -1,
+      sampler_name: "Euler a",
+      batch_size: 1,
+      n_iter: 1,
+      steps: 20,
+      cfg_scale: 7,
+      width: 512,
+      height: 768,
+      restore_faces: true,
+      tiling: false,
+      do_not_save_samples: false,
+      do_not_save_grid: false,
+      eta: 0,
+      s_min_uncond: 0,
+      s_churn: 0,
+      s_tmax: 0,
+      s_tmin: 0,
+      s_noise: 1,
+      override_settings: {},
+      override_settings_restore_afterwards: true,
+      script_args: [],
+      sampler_index: "Euler a",
+      script_name: "",
+      send_images: true,
+      save_images: false,
+      alwayson_scripts: {},
+    }
 
   // Sending request to the new API endpoint
   const imageResponse = await fetch(API_ENDPOINT, {

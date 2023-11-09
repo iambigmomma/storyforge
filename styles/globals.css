@@ -83,3 +83,65 @@
     } */
   }
 }
+@media screen and (max-width: 768px) {
+  /* Adjust carousel slide width to show one slide at a time on mobile */
+  .example-prompts-carousel .carousel .slide {
+    min-width: 100%;
+  }
+
+  /* Hide navigation arrows on mobile */
+  .example-prompts-carousel .carousel .control-arrow {
+    display: none;
+  }
+
+  /* Adjust center slide percentage for mobile view */
+  .example-prompts-carousel .carousel {
+    centermode: false;
+  }
+
+  /* Carousel container adjustments for mobile */
+  .carousel-container {
+    border: none; /* Optional: if you want to remove border on mobile */
+  }
+
+  /* Adjust card styles for mobile if needed */
+  .carousel-container .carousel-card {
+    /* Add any specific mobile styles for carousel cards here */
+  }
+}
+
+.carousel-container {
+  max-width: 80%;
+  margin: auto;
+  border: 2px dotted rgba(31, 152, 228, 0.903); /* Grey outline for the carousel */
+  border-radius: 5px; /* Rounded corners for the carousel container */
+  overflow: hidden; /* Ensures the border radius clips the carousel content */
+}
+
+.carousel-container .carousel-card {
+  border-radius: 10px; /* Rounded corners for each card */
+  background: #ffffff; /* White background for cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for cards */
+  transition: transform 0.5s ease; /* Smooth transition for hover effect */
+  margin: 10px; /* Space around cards */
+  padding-top: 10px; /* Space above the card content */
+}
+
+.carousel-container .carousel-card:hover {
+  transform: scale(1.03); /* Slightly enlarges the card on hover */
+}
+
+.carousel .control-arrow {
+  opacity: 1; /* Arrows are always visible */
+}
+
+.carousel .control-arrow:before {
+  color: #333; /* Arrow icon color */
+}
+
+.carousel .legend {
+  background: none; /* Remove the default background */
+  padding: 0; /* No padding */
+  font-weight: bold; /* Bold font for the title */
+  color: #333; /* Title text color */
+}

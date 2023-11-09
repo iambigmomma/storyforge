@@ -135,7 +135,7 @@ export default withApiAuthRequired(async function handler(req, res) {
   const imageBuffer = Buffer.from(responseBody.images[0], "base64")
 
   // Generate a unique filename for the image
-  const fileName = imageName + `.jpg`
+  const fileName = imageName.replace(/\s+/g, "_") + `.jpg`
 
   // Use the user's DO Space bucket name or a default bucket name
   //   const bucketName = userProfile.bucketName || "default-bucket-name";

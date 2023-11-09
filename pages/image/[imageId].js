@@ -113,7 +113,9 @@ export default function Post(props) {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
             <div className="relative p-4 bg-white rounded-lg shadow-lg">
               {/* Close Icon */}
-              <div className="absolute z-10 cursor-pointer right-4 top-4">
+              <div
+                className="absolute z-10 cursor-pointer right-4 top-4"
+                onClick={() => setShowModal(false)}>
                 <FontAwesomeIcon
                   icon={faTimes}
                   size="lg"

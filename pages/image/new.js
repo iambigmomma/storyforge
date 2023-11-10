@@ -164,7 +164,10 @@ export default function NewImage(props) {
       </div>
       {/* Prompt Examples Section */}
       <label className="block text-center">
-        <h3>Inspire by other masterpiece</h3>
+        <h3>Inspire by Masterpiece</h3>
+        <div style={{ maxWidth: "80%", margin: "auto"}}>
+          <p>(Tap to paste)</p>
+        </div>
       </label>
       <div
         className="carousel-container"

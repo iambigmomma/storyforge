@@ -34,7 +34,7 @@ export default function Home() {
           imagination roam free.
         </p>
         <Link href="/image/new" className="inline-block px-6 py-3 text-sm font-bold leading-none text-white bg-blue-500 rounded hover:bg-blue-600">
-            Start
+            Begin
           
         </Link>
       </div>

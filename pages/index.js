@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Logo } from "../components/Logo"
-import HeroImage from "../public/tum-background.jpg"
+import HeroImage from "../public/deploy-24-cover.png"
 import Head from "next/head"
 
 export default function Home() {
